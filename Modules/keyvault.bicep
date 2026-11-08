@@ -20,7 +20,7 @@ resource secret1 'Microsoft.KeyVault/vaults/secrets@2026-05-15' = {
   name: 'vmadminusername'
   parent: kv  // Pass key vault symbolic name as parent
   properties: {
-    value: ''
+    value: 'testadmin'
   }
   
 }
