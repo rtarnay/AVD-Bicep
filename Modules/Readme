@@ -1,0 +1,3 @@
+The template is a subscription-scoped deployment that creates resource groups, a Personal Azure Virtual Desktop host pool and its workspace/application group, a weekday personal autoscale plan, and optional Azure Files storage for profiles. The storage path uses a private endpoint and private DNS.
+
+The Bicep files and parameter file build successfully. A deployment snapshot produced no diagnostics and expanded the storage/private-endpoint resources. However, **the current main template deploys no session-host virtual machines**. The session-host resource group is created but remains empty, and the separate session-host module is not invoked. Consequently, this is currently a control-plane/network/storage deployment, not a complete usable AVD environment.
