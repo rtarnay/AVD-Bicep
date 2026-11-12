@@ -1,0 +1,327 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.48.1.52935",
+      "templateHash": "4778937328212058347"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
+    },
+    "imagetemplatename": {
+      "type": "string",
+      "defaultValue": "tarnaylab-win11-avd"
+    },
+    "azComputeGalleryName": {
+      "type": "string",
+      "defaultValue": "TLABGallery"
+    },
+    "stgaccountname": {
+      "type": "string",
+      "defaultValue": "aibstorageavd",
+      "metadata": {
+        "description": "The name of the Storage account."
+      }
+    },
+    "azUserAssignedManagedIdentity": {
+      "type": "string",
+      "defaultValue": "manageduserid"
+    }
+  },
+  "variables": {
+    "vmOfferDetails": {
+      "offer": "Windows11",
+      "publisher": "MicrosoftWindowsDesktop",
+      "sku": "win11-25h2-avd",
+      "version": "latest"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2024-11-30",
+      "name": "[parameters('azUserAssignedManagedIdentity')]",
+      "location": "[parameters('location')]"
+    },
+    {
+      "type": "Microsoft.Compute/galleries",
+      "apiVersion": "2026-03-03",
+      "name": "[parameters('azComputeGalleryName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "description": "mygallery"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "name": "[guid(resourceGroup().id, 'contributor')]",
+      "properties": {
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('azUserAssignedManagedIdentity')), '2024-11-30').principalId]",
+        "principalType": "ServicePrincipal",
+        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('azUserAssignedManagedIdentity'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "name": "[guid(resourceGroup().id, 'blobreader')]",
+      "properties": {
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('azUserAssignedManagedIdentity')), '2024-11-30').principalId]",
+        "principalType": "ServicePrincipal",
+        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('azUserAssignedManagedIdentity'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Compute/galleries/images",
+      "apiVersion": "2026-03-03",
+      "name": "[format('{0}/{1}', parameters('azComputeGalleryName'), 'myImage')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "description": "myImage",
+        "osType": "Windows",
+        "osState": "Generalized",
+        "hyperVGeneration": "V2",
+        "identifier": {
+          "publisher": "[variables('vmOfferDetails').publisher]",
+          "offer": "[variables('vmOfferDetails').offer]",
+          "sku": ""
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/galleries', parameters('azComputeGalleryName'))]",
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('azUserAssignedManagedIdentity'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.VirtualMachineImages/imageTemplates",
+      "apiVersion": "2025-10-01",
+      "name": "[parameters('imagetemplatename')]",
+      "location": "[parameters('location')]",
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "[format('{0}', resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('azUserAssignedManagedIdentity')))]": {}
+        }
+      },
+      "properties": {
+        "buildTimeoutInMinutes": 360,
+        "distribute": [
+          {
+            "type": "SharedImage",
+            "galleryImageId": "[resourceId('Microsoft.Compute/galleries/images', parameters('azComputeGalleryName'), 'myImage')]",
+            "runOutputName": "myImageTemplateRunOutput",
+            "replicationRegions": [
+              "Australia East"
+            ]
+          }
+        ],
+        "source": {
+          "type": "PlatformImage",
+          "publisher": "[variables('vmOfferDetails').publisher]",
+          "offer": "[variables('vmOfferDetails').offer]",
+          "sku": "[variables('vmOfferDetails').sku]",
+          "version": "latest"
+        },
+        "customize": "[reference(resourceId('Microsoft.Resources/deployments', 'customizationsModule'), '2025-04-01').outputs.customizationsOutput.value]",
+        "vmProfile": {
+          "vmSize": "Standard_D4ds_v5",
+          "osDiskSizeGB": 0
+        },
+        "optimize": {
+          "vmBoot": {
+            "state": "Enabled"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/galleries/images', parameters('azComputeGalleryName'), 'myImage')]",
+        "[resourceId('Microsoft.Resources/deployments', 'customizationsModule')]",
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('azUserAssignedManagedIdentity'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "storagemodule",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "stgaccountname": {
+            "value": "[parameters('stgaccountname')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.48.1.52935",
+              "templateHash": "2336560892304025377"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Location for all resources."
+              }
+            },
+            "stgaccountname": {
+              "type": "string",
+              "metadata": {
+                "description": "The name of the Storage account."
+              }
+            },
+            "publicaccess": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "Sets the public access of the storage account."
+              }
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Storage/storageAccounts",
+              "apiVersion": "2023-01-01",
+              "name": "[toLower(parameters('stgaccountname'))]",
+              "location": "[parameters('location')]",
+              "kind": "StorageV2",
+              "sku": {
+                "name": "Standard_LRS"
+              },
+              "properties": {
+                "accessTier": "Hot",
+                "allowBlobPublicAccess": "[parameters('publicaccess')]"
+              }
+            },
+            {
+              "type": "Microsoft.Storage/storageAccounts/blobServices",
+              "apiVersion": "2022-09-01",
+              "name": "[format('{0}/{1}', toLower(parameters('stgaccountname')), 'default')]",
+              "properties": {
+                "isVersioningEnabled": true
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', toLower(parameters('stgaccountname')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+              "apiVersion": "2022-09-01",
+              "name": "[format('{0}/{1}/{2}', toLower(parameters('stgaccountname')), 'default', 'iac')]",
+              "properties": {
+                "publicAccess": "[if(parameters('publicaccess'), 'Blob', 'None')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', toLower(parameters('stgaccountname')), 'default')]"
+              ]
+            }
+          ],
+          "outputs": {
+            "storgeaccountid": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Storage/storageAccounts', toLower(parameters('stgaccountname')))]"
+            },
+            "storgeaccountname": {
+              "type": "string",
+              "value": "[toLower(parameters('stgaccountname'))]"
+            },
+            "containername": {
+              "type": "string",
+              "value": "iac"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "customizationsModule",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {},
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.48.1.52935",
+              "templateHash": "1097407277484625341"
+            }
+          },
+          "variables": {
+            "customizations": [
+              {
+                "type": "PowerShell",
+                "name": "Create Apps Directory on OS drive",
+                "runElevated": false,
+                "runAsSystem": false,
+                "inline": [
+                  "New-Item -ItemType Directory -Force -Path $env:SystemDrive\\apps\\"
+                ]
+              },
+              {
+                "type": "WindowsUpdate",
+                "searchCriteria": "IsInstalled=0",
+                "filters": [
+                  "exclude:$_.Title -like '*Preview*'",
+                  "include:$true"
+                ],
+                "updateLimit": 20
+              },
+              {
+                "type": "WindowsRestart",
+                "restartCheckCommand": "write-host 'restarting post Windows Updates'",
+                "restartTimeout": "10m"
+              },
+              {
+                "type": "WindowsUpdate",
+                "searchCriteria": "IsInstalled=0",
+                "filters": [
+                  "exclude:$_.Title -like '*Preview*'",
+                  "include:$true"
+                ],
+                "updateLimit": 20
+              },
+              {
+                "type": "WindowsRestart",
+                "restartCheckCommand": "write-host 'restarting post image customisation'",
+                "restartTimeout": "10m"
+              }
+            ]
+          },
+          "resources": [],
+          "outputs": {
+            "customizationsOutput": {
+              "type": "array",
+              "value": "[variables('customizations')]"
+            }
+          }
+        }
+      }
+    }
+  ]
+}
