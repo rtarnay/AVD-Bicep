@@ -27,7 +27,7 @@ param hostpoolproperties object = {
   personalDesktopAssignmentType: 'Direct'
   validationEnvironment: false
   preferredAppGroupType: 'Desktop'
-  publicNetworkAccess: 'Enabled'
+  publicNetworkAccess: 'Disabled'
   directUDP: 'Default'
   managedPrivateUDP: 'Default'
   publicUDP: 'Default'
