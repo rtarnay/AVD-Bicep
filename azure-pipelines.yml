@@ -8,24 +8,41 @@ trigger:
 
 name: Deploy AVD Bicep files
 
+
 parameters:
 - name: azureServiceConnection
   type: string
   default: 'tarnaylab-devops'
 
 variables:
+  vmImageName: 'ubuntu-latest'
   subscriptionId: 'add28662-fd96-4fb4-9a1f-2c47e0005245'
   templateFile: './tarnaylabmain.bicep'
   parametersFile: './tarnaylabavd.bicepparam'
 
-steps:
-- task: BicepDeploy@0
-  inputs:
-    azureResourceManagerConnection: '${{ parameters.azureServiceConnection }}'
-    type: 'deployment'
-    operation: 'create'
-    scope: 'subscription'
-    subscriptionId: '$(subscriptionId)'
-    name: 'DeployPipelineTemplate'
-    templateFile: '$(templateFile)'
-    parametersFile: '$(parametersFile)'
+pool:
+  vmImage: $(vmImageName)
+
+jobs:
+- deployment: 'DeployAVD'
+  environment: 'Production'
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+         - checkout: self  # <-- Add this line
+         - script: ls -la $(Build.SourcesDirectory)/Modules
+         - task: BicepDeploy@0
+           inputs:
+              azureResourceManagerConnection: '${{ parameters.azureServiceConnection }}'
+              type: 'deployment'
+              operation: 'create'
+              scope: 'subscription'
+              subscriptionId: '$(subscriptionId)'
+              name: 'DeployPipelineTemplate'
+              templateFile: '$(templateFile)'
+              parametersFile: '$(parametersFile)'
+
+
+    
+  
