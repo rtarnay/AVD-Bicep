@@ -38,6 +38,7 @@ jobs:
               type: 'deployment'
               operation: 'create'
               scope: 'subscription'
+              location: 'auseast'
               subscriptionId: '$(subscriptionId)'
               name: 'DeployPipelineTemplate'
               templateFile: '$(templateFile)'
