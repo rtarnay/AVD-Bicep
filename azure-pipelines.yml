@@ -8,6 +8,7 @@ trigger:
 
 name: Deploy AVD Bicep files
 
+
 parameters:
 - name: azureServiceConnection
   type: string
@@ -22,16 +23,26 @@ variables:
 pool:
   vmImage: $(vmImageName)
 
-steps:
-- task: BicepDeploy@0
-  inputs:
-    azureResourceManagerConnection: '${{ parameters.azureServiceConnection }}'
-    type: 'deployment'
-    operation: 'create'
-    scope: 'subscription'
-    subscriptionId: '$(subscriptionId)'
-    name: 'DeployPipelineTemplate'
-    templateFile: '$(templateFile)'
-    parametersFile: '$(parametersFile)'
+jobs:
+- deployment: 'DeployAVD'
+  environment: 'Production'
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+         - checkout: self  # <-- Add this line
+         - script: ls -la $(Build.SourcesDirectory)/Modules
+         - task: BicepDeploy@0
+           inputs:
+              azureResourceManagerConnection: '${{ parameters.azureServiceConnection }}'
+              type: 'deployment'
+              operation: 'create'
+              scope: 'subscription'
+              subscriptionId: '$(subscriptionId)'
+              name: 'DeployPipelineTemplate'
+              templateFile: '$(templateFile)'
+              parametersFile: '$(parametersFile)'
+
+
     
   
