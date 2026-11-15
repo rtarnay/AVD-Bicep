@@ -1,6 +1,6 @@
 metadata name = 'ScalingPlan Module for Personal Host Pools'
 metadata description = 'Deploys an autoscale plan and weekday schedule for an Azure Virtual Desktop personal host pool.'
-metadata version = '1.0.0'
+metadata version = '1.0.1'
 metadata author = 'Robbie Tarnay'
 
 @description('Name of the scaling plan.')
