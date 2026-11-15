@@ -90,8 +90,8 @@ resource weekdaySchedule 'Microsoft.DesktopVirtualization/scalingPlans/personalS
     }
     rampDownStartVMOnConnect: 'Enable'
     rampDownMinutesToWaitOnDisconnect: 60
-    rampDownActionOnDisconnect: 'Deallocate'
-    rampDownMinutesToWaitOnLogoff: 15
+    rampDownActionOnDisconnect: 'None'
+    rampDownMinutesToWaitOnLogoff: 30
     rampDownActionOnLogoff: 'Deallocate'
     offPeakStartTime: {
       hour: 19

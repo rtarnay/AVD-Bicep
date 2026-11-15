@@ -134,7 +134,7 @@ param powerOnOffContributorRoleDefinitionId string = '40c5ff49-9181-41f8-ae61-14
 
 //AVD Modules for networking, hostpool, scaling plan and Azure File Storage
 
-module networking './Modules/Networking.bicep' = {
+module networking './modules/networking.bicep' = {
   name: 'networkingcomponent'
   scope:resourceGroup(network.name)
   params: {
@@ -149,7 +149,7 @@ module networking './Modules/Networking.bicep' = {
   ]
 }
 
-module hostPool './Modules/hostpool.bicep' = {
+module hostPool './modules/hostpool.bicep' = {
   name: 'hostPoolComponent'
   scope: resourceGroup(controlplane.name)
   params: {
@@ -178,7 +178,7 @@ param enableautoscaleplan bool
 @description('Time zone for the scaling plan, e.g., AUS Eastern Standard Time')
 param timeZone string = 'AUS Eastern Standard Time'
 
-module scalingPlan './Modules/Scaling_Personal.bicep' = if (enableautoscaleplan) {
+module scalingPlan './modules/Scaling_Personal.bicep' = if (enableautoscaleplan) {
   name: 'scalingPlanComponent'
   scope: resourceGroup(controlplane.name)
   params: {
@@ -208,7 +208,7 @@ resource subnet 'Microsoft.Network/virtualNetworks/subnets@2026-01-01' existing 
   name: subnetName
 }
 
-module storageAccount './Modules/Storage.bicep' = if (fslogixEnabled) {
+module storageAccount './modules/Storage.bicep' = if (fslogixEnabled) {
   name: 'storageAccountComponent'
   scope: resourceGroup(storage.name)
   params: {
