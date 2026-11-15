@@ -15,7 +15,7 @@ parameters:
   default: 'tarnaylab-devops'
 
 variables:
-  vmImageName: 'ubuntu-latest'
+  vmImageName: 'windows-latest'
   subscriptionId: 'add28662-fd96-4fb4-9a1f-2c47e0005245'
   templateFile: './tarnaylabmain.bicep'
   parametersFile: './tarnaylabavd.bicepparam'
