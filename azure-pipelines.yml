@@ -14,9 +14,13 @@ parameters:
   default: 'tarnaylab-devops'
 
 variables:
+  vmImageName: 'ubuntu-latest'
   subscriptionId: 'add28662-fd96-4fb4-9a1f-2c47e0005245'
   templateFile: './tarnaylabmain.bicep'
   parametersFile: './tarnaylabavd.bicepparam'
+
+pool:
+  vmImage: $(vmImageName)
 
 steps:
 - task: BicepDeploy@0
@@ -29,3 +33,5 @@ steps:
     name: 'DeployPipelineTemplate'
     templateFile: '$(templateFile)'
     parametersFile: '$(parametersFile)'
+    
+  
