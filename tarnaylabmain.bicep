@@ -178,7 +178,7 @@ param enableautoscaleplan bool
 @description('Time zone for the scaling plan, e.g., AUS Eastern Standard Time')
 param timeZone string = 'AUS Eastern Standard Time'
 
-module scalingPlan './modules/Scaling_Personal.bicep' = if (enableautoscaleplan) {
+module scalingPlan './modules/scaling_personal.bicep' = if (enableautoscaleplan) {
   name: 'scalingPlanComponent'
   scope: resourceGroup(controlplane.name)
   params: {
@@ -208,7 +208,7 @@ resource subnet 'Microsoft.Network/virtualNetworks/subnets@2026-01-01' existing 
   name: subnetName
 }
 
-module storageAccount './modules/Storage.bicep' = if (fslogixEnabled) {
+module storageAccount './modules/storage.bicep' = if (fslogixEnabled) {
   name: 'storageAccountComponent'
   scope: resourceGroup(storage.name)
   params: {
