@@ -2,7 +2,7 @@
 // targetScope = 'resourcegroup'  -  this is default value
 // This bicep file deploys an AVD Pooled/Personal Desktop host pool. workspace and application group. It can optionally create a new virtual network and subnet for the AVD host pool. 
 // If FSLogix is enabled It also deploys a storage account with a file share and private endpoint for the file share. The storage account is configured with Kerberos authentication methods, AES encryption, and a share delete retention policy. The file share is configured with an access tier of Premium, enabled protocols of SMB, and a share quota. The private endpoint is linked to a private DNS zone for the file share.
-
+// Deploys AVD Insights for monitoring with Log Analytics Workspace and Azure Monitor
 metadata deploymenttype = 'AVD Deployment - inculding host pool,networking,Azure file storage for FSLogix,Autoscale scaling plan'
 metadata author = 'Robbie Tarnay'
 
@@ -38,6 +38,9 @@ param hostpooltype string
 param applicationGroupName string
 @description('Workspace resource name')
 param workspaceName string
+
+@description('Dedicated Log Analytics workspace name for Azure Virtual Desktop Insights.')
+param logAnalyticsWorkspaceName string
 
 @description('Application group resource property configuration')
 param applicationGroupProperties object = {
@@ -98,7 +101,8 @@ param resourcegroups object = {
   resourceGroupName1: 'rg-avd3-controlplane'
   resourceGroupName2: 'rg-avd3-storage'
   resourceGroupName3: 'rg-avd3-networking'
-   resourceGroupName4: 'rg-avd3-sessionhosts'
+   resourceGroupName4: 'rg-avd3-monitoring'
+   resourceGroupName5: 'rg-avd3-sessionhosts'
 }
 
 //Create resource groups
@@ -116,6 +120,10 @@ resource storage 'Microsoft.Resources/resourceGroups@2024-03-01' existing = {
 
 resource network 'Microsoft.Resources/resourceGroups@2024-03-01' existing = {
   name: resourcegroups.resourceGroupName3
+}
+
+resource monitoring 'Microsoft.Resources/resourceGroups@2024-03-01' existing = {
+  name: resourcegroups.resourceGroupName4
 }
 
 
@@ -166,6 +174,20 @@ module hostPool './modules/hostpool.bicep' = {
     rg
   ]
 }
+
+module avdInsights './modules/avdinsights.bicep' = {
+  scope: resourceGroup(monitoring.name)
+  params: {
+    location: location
+    hostPoolName: hostPoolName
+    avdWorkspaceName: workspaceName
+    logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
+  }
+  dependsOn: [
+    hostPool
+  ]
+}
+
 
 resource hostpoolpersonal 'Microsoft.DesktopVirtualization/hostPools@2025-10-10' existing = {
   name: hostPoolName
