@@ -68,8 +68,8 @@ jobs:
       - name: Sign in to Azure with OIDC
         uses: azure/login@v3
         with:
-          client-id: ${{ inputs.azure_client_id }}
-          tenant-id: ${{ inputs.azure_tenant_id }}
+          client-id: ${{ vars.azure_client_id }}
+          tenant-id: ${{ vars.azure_tenant_id }}
           subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
 
       - name: Preview subscription deployment
