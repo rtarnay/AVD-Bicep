@@ -54,7 +54,6 @@ jobs:
     needs: validate
     if: github.event_name != 'pull_request'
     runs-on: windows-latest
-    environment: production
     permissions:
       contents: read
       id-token: write
