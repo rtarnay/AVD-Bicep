@@ -1,0 +1,89 @@
+name: Deploy AVD Bicep
+
+on:
+  workflow_call:
+    inputs:
+      azure_client_id:
+        description: Azure application/client ID for OIDC
+        required: true
+        type: string
+      azure_tenant_id:
+        description: Microsoft Entra tenant ID
+        required: true
+        type: string
+      azure_subscription_id:
+        description: Azure subscription ID
+        required: true
+        type: string
+      azure_location:
+        description: Azure deployment location
+        required: false
+        default: australiaeast
+        type: string
+      bicep_main:
+       description: Bicep Main File 
+       required: true
+       type: string
+      bicep_params:
+       description: Bicep Parameter File 
+       required: true
+       type: string 
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate Bicep
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Bicep
+        run: az bicep install
+
+      - name: Build deployment template
+        run: az bicep build --file tarnaylabmain.bicep
+
+      - name: Build deployment parameters
+        run: az bicep build-params --file "${{ inputs.bicep_params }}" --outfile "${RUNNER_TEMP}/avd.parameters.json"
+
+  deploy:
+    name: Deploy to Azure
+    needs: validate
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      AZURE_LOCATION: ${{ inputs.azure_location }}
+      AZURE_SUBSCRIPTION_ID: ${{ inputs.azure_subscription_id }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Sign in to Azure with OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ inputs.azure_client_id }}
+          tenant-id: ${{ inputs.azure_tenant_id }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Preview subscription deployment
+        run: |
+          az deployment sub what-if \
+            --name "avd-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            --location "$AZURE_LOCATION" \
+            --template-file tarnaylabmain.bicep \
+            --parameters tarnaylabavd.bicepparam subscriptionId="$AZURE_SUBSCRIPTION_ID"
+
+      - name: Deploy subscription template
+        run: |
+          az deployment sub create \
+            --name "avd-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            --location "$AZURE_LOCATION" \
+            --template-file tarnaylabmain.bicep \
+            --parameters tarnaylabavd.bicepparam subscriptionId="$AZURE_SUBSCRIPTION_ID"
