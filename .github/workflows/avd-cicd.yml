@@ -17,8 +17,6 @@ jobs:
     name: Validate and deploy AVD
     uses: ./.github/workflows/deploy.yml
     with:
-      azure_client_id: ${{ vars.AZURE_CLIENT_ID }}
-      azure_tenant_id: ${{ vars.AZURE_TENANT_ID }}
       azure_subscription_id: add28662-fd96-4fb4-9a1f-2c47e0005245
       azure_location: australiaeast
       bicep_main: tarnaylabmain.bicep
