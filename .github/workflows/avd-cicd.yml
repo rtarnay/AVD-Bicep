@@ -21,6 +21,7 @@ jobs:
       azure_tenant_id: ${{ vars.AZURE_TENANT_ID }}
       azure_subscription_id: add28662-fd96-4fb4-9a1f-2c47e0005245
       azure_location: australiaeast
+      bicep_main: tarnaylabmain.bicep
       bicep_params: tarnaylabavd.bicepparam
     permissions:
       contents: read
