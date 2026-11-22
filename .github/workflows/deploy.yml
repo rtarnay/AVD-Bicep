@@ -60,6 +60,7 @@ jobs:
     env:
       AZURE_LOCATION: ${{ inputs.azure_location }}
       AZURE_SUBSCRIPTION_ID: ${{ inputs.azure_subscription_id }}
+      UNIQUE_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -73,16 +74,12 @@ jobs:
 
       - name: Preview subscription deployment
         run: |
-          az deployment sub what-if \
-            --name "avd-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
-            --location "$AZURE_LOCATION" \
+          az deployment sub what-if --name "avd-$env:UNIQUE_EXECUTION_ID" --location "$AZURE_LOCATION" \
             --template-file "${{ inputs.bicep_main }}" \
             --parameters "${{ inputs.bicep_params }}" subscriptionId="$AZURE_SUBSCRIPTION_ID"
 
       - name: Deploy subscription template
         run: |
-          az deployment sub create \
-            --name "avd-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
-            --location "$AZURE_LOCATION" \
-            --template-file tarnaylabmain.bicep \
-            --parameters tarnaylabavd.bicepparam subscriptionId="$AZURE_SUBSCRIPTION_ID"
+           az deployment sub create --name "avd-$env:UNIQUE_EXECUTION_ID" --location "$AZURE_LOCATION" \
+            --template-file "${{ inputs.bicep_main }}" \
+            --parameters "${{ inputs.bicep_params }}" subscriptionId="$AZURE_SUBSCRIPTION_ID"
