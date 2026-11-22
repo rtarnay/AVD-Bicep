@@ -21,7 +21,7 @@ on:
         default: australiaeast
         type: string
       bicep_main:
-       description: Bicep Parameter File 
+       description: Bicep Main File 
        required: true
        type: string
       bicep_params:
