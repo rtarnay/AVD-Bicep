@@ -35,7 +35,7 @@ permissions:
 jobs:
   validate:
     name: Validate Bicep
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -63,10 +63,10 @@ jobs:
       AZURE_SUBSCRIPTION_ID: ${{ inputs.azure_subscription_id }}
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Sign in to Azure with OIDC
-        uses: azure/login@v2
+        uses: azure/login@v3
         with:
           client-id: ${{ inputs.azure_client_id }}
           tenant-id: ${{ inputs.azure_tenant_id }}
