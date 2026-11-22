@@ -47,7 +47,7 @@ jobs:
         run: az bicep build --file "${{ inputs.bicep_main }}"
 
       - name: Build deployment parameters
-        run: az bicep build-params --file "${{ inputs.bicep_params }}" --outfile "${RUNNER_TEMP}/avd.parameters.json"
+        run: az bicep build-params --file "${{ inputs.bicep_params }}" --outfile "$env:RUNNER_TEMP\avd.parameters.json"
 
   deploy:
     name: Deploy to Azure
@@ -74,12 +74,8 @@ jobs:
 
       - name: Preview subscription deployment
         run: |
-          az deployment sub what-if --name "avd-$env:UNIQUE_EXECUTION_ID" --location "$AZURE_LOCATION" \
-            --template-file "${{ inputs.bicep_main }}" \
-            --parameters "${{ inputs.bicep_params }}" subscriptionId="$AZURE_SUBSCRIPTION_ID"
+          az deployment sub what-if --name "avd-$($env:UNIQUE_EXECUTION_ID)" --location "$env:AZURE_LOCATION" --template-file "${{ inputs.bicep_main }}" --parameters "${{ inputs.bicep_params }}" "subscriptionId=$env:AZURE_SUBSCRIPTION_ID"
 
       - name: Deploy subscription template
         run: |
-           az deployment sub create --name "avd-$env:UNIQUE_EXECUTION_ID" --location "$AZURE_LOCATION" \
-            --template-file "${{ inputs.bicep_main }}" \
-            --parameters "${{ inputs.bicep_params }}" subscriptionId="$AZURE_SUBSCRIPTION_ID"
+          az deployment sub create --name "avd-$($env:UNIQUE_EXECUTION_ID)" --location "$env:AZURE_LOCATION" --template-file "${{ inputs.bicep_main }}" --parameters "${{ inputs.bicep_params }}" "subscriptionId=$env:AZURE_SUBSCRIPTION_ID"
