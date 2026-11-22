@@ -5,11 +5,11 @@ on:
     inputs:
       azure_client_id:
         description: Azure application/client ID for OIDC
-        required: true
+        required: false
         type: string
       azure_tenant_id:
         description: Microsoft Entra tenant ID
-        required: true
+        required: false
         type: string
       azure_subscription_id:
         description: Azure subscription ID
