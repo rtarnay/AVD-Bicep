@@ -105,27 +105,11 @@ param resourcegroups object = {
 
 }
 
-//Create resource groups and reference them
+//Create resource groups
 resource rg 'Microsoft.Resources/resourceGroups@2025-04-01' = [for resourceGroup in items(resourcegroups): {
   name: resourceGroup.value
   location: location
 }]
-
-resource controlplane 'Microsoft.Resources/resourceGroups@2024-03-01' existing = {
-  name: resourcegroups.resourceGroupName1
-}
-resource storage 'Microsoft.Resources/resourceGroups@2024-03-01' existing = {
-  name: resourcegroups.resourceGroupName2
-}
-
-resource network 'Microsoft.Resources/resourceGroups@2024-03-01' existing = {
-  name: resourcegroups.resourceGroupName3
-}
-
-resource monitoring 'Microsoft.Resources/resourceGroups@2024-03-01' existing = {
-  name: resourcegroups.resourceGroupName4
-}
-
 
 //Service Principal Permissions for AVD Scaling Plan
 @description('The Object ID (Principal ID) of the Azure Virtual Desktop Service Principal in your tenant.')
@@ -144,7 +128,7 @@ param powerOnOffContributorRoleDefinitionId string = '40c5ff49-9181-41f8-ae61-14
 
 module networking './modules/networking.bicep' = {
   name: 'networkingcomponent'
-  scope:resourceGroup(network.name)
+  scope: resourceGroup(resourcegroups.resourceGroupName3)
   params: {
     newVirtualNetwork: newVirtualNetwork
     subnetAddressPrefix: subnetAddressPrefix
@@ -159,7 +143,7 @@ module networking './modules/networking.bicep' = {
 
 module hostPool './modules/hostpool.bicep' = {
   name: 'hostPoolComponent'
-  scope: resourceGroup(controlplane.name)
+  scope: resourceGroup(resourcegroups.resourceGroupName1)
   params: {
     location: location
     hostPoolName: hostPoolName
@@ -176,7 +160,7 @@ module hostPool './modules/hostpool.bicep' = {
 }
 
 module avdInsights './modules/avdinsights.bicep' = {
-  scope: resourceGroup(monitoring.name)
+  scope: resourceGroup(resourcegroups.resourceGroupName4)
   params: {
     location: location
     hostPoolName: hostPoolName
@@ -191,7 +175,7 @@ module avdInsights './modules/avdinsights.bicep' = {
 
 resource hostpoolpersonal 'Microsoft.DesktopVirtualization/hostPools@2025-10-10' existing = {
   name: hostPoolName
-  scope: resourceGroup(controlplane.name)
+  scope: resourceGroup(resourcegroups.resourceGroupName1)
 }
 
 
@@ -202,7 +186,7 @@ param timeZone string = 'AUS Eastern Standard Time'
 
 module scalingPlan './modules/scaling_personal.bicep' = if (enableautoscaleplan) {
   name: 'scalingPlanComponent'
-  scope: resourceGroup(controlplane.name)
+  scope: resourceGroup(resourcegroups.resourceGroupName1)
   params: {
     location: location
     hostPoolId: hostpoolpersonal.id
@@ -221,7 +205,7 @@ module scalingPlan './modules/scaling_personal.bicep' = if (enableautoscaleplan)
 //Retrieve Networking
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2026-01-01' existing = {
   name: virtualNetworkName
-  scope: resourceGroup(network.name)
+  scope: resourceGroup(resourcegroups.resourceGroupName3)
 
 }
 
@@ -232,7 +216,7 @@ resource subnet 'Microsoft.Network/virtualNetworks/subnets@2026-01-01' existing 
 
 module storageAccount './modules/storage.bicep' = if (fslogixEnabled) {
   name: 'storageAccountComponent'
-  scope: resourceGroup(storage.name)
+  scope: resourceGroup(resourcegroups.resourceGroupName2)
   params: {
     location: location
     storageAccountName: storageAccountName
