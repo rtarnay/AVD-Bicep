@@ -105,10 +105,10 @@ param hostpoolproperties object = {
 //Create Resource Groups for deployment
 
 param resourcegroups object = {
-  resourceGroupName1: 'rg-avd-controlplane'
-  resourceGroupName2: 'rg-avd-storage'
-  resourceGroupName3: 'rg-avd-networking'
-  resourceGroupName4: 'rg-avd-monitoring'
+  resourceGroupName1: 'rg-avd2-controlplane'
+  resourceGroupName2: 'rg-avd2-storage'
+  resourceGroupName3: 'rg-avd2-networking'
+  resourceGroupName4: 'rg-avd2-monitoring'
 
 }
 

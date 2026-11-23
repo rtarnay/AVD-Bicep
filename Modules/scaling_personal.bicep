@@ -15,11 +15,13 @@ param timeZone string = 'AUS Eastern Standard Time'
 @description('Resource ID of the personal host pool to associate with this plan.')
 param hostPoolId string
 
+
 //Service Principal Permissions for AVD Scaling Plan
 @description('The Object ID (Principal ID) of the Azure Virtual Desktop Service Principal in your tenant.')
 param avdServicePrincipalObjectId string
 @description('The subscription ID where the AVD scaling plan and host pools reside.')
 param subscriptionId string = subscription().id
+
 
 // Built-in Role ID for 'Desktop Virtualization Power On Off Contributor'
 // ID: 40c5ff49-9181-41f8-ae61-143b0e78555e
