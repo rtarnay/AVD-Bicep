@@ -105,10 +105,10 @@ param hostpoolproperties object = {
 //Create Resource Groups for deployment
 
 param resourcegroups object = {
-  resourceGroupName1: 'rg-avd2-controlplane'
-  resourceGroupName2: 'rg-avd2-storage'
-  resourceGroupName3: 'rg-avd2-networking'
-  resourceGroupName4: 'rg-avd2-monitoring'
+  resourceGroupName1: 'rg-avd-controlplane'
+  resourceGroupName2: 'rg-avd-storage'
+  resourceGroupName3: 'rg-avd-networking'
+  
 
 }
 
@@ -170,7 +170,7 @@ module hostPool './modules/hostpool.bicep' = {
 }
 
 module avdInsights './modules/avdinsights.bicep' = if (enablemonitoring) {
-  scope: resourceGroup(resourcegroups.resourceGroupName4)
+  scope: resourceGroup(resourcegroups.resourceGroupName1)
   params: {
     location: location
     hostPoolName: hostPoolName

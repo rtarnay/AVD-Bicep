@@ -68,7 +68,7 @@ resource avdInsightsDataCollectionRule 'Microsoft.Insights/dataCollectionRules@2
     dataSources: {
       performanceCounters: [
         {
-          name: 'avdInsightsPerformanceCount30s'
+          name: 'avdInsightsPerfCount30s'
           streams: [
             'Microsoft-Perf'
           ]
@@ -92,7 +92,7 @@ resource avdInsightsDataCollectionRule 'Microsoft.Insights/dataCollectionRules@2
           ]
         }
         {
-          name: 'avdInsightsPerfCounters60s'
+          name: 'avdInsightsPerfCount60s'
           streams: [
             'Microsoft-Perf'
           ]
