@@ -101,11 +101,11 @@ param resourcegroups object = {
   resourceGroupName1: 'rg-avd3-controlplane'
   resourceGroupName2: 'rg-avd3-storage'
   resourceGroupName3: 'rg-avd3-networking'
-   resourceGroupName4: 'rg-avd3-monitoring'
-   resourceGroupName5: 'rg-avd3-sessionhosts'
+  resourceGroupName4: 'rg-avd3-monitoring'
+
 }
 
-//Create resource groups
+//Create resource groups and reference them
 resource rg 'Microsoft.Resources/resourceGroups@2025-04-01' = [for resourceGroup in items(resourcegroups): {
   name: resourceGroup.value
   location: location
