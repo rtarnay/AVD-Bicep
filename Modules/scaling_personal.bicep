@@ -18,7 +18,6 @@ param hostPoolId string
 //Service Principal Permissions for AVD Scaling Plan
 @description('The Object ID (Principal ID) of the Azure Virtual Desktop Service Principal in your tenant.')
 param avdServicePrincipalObjectId string
-
 @description('The subscription ID where the AVD scaling plan and host pools reside.')
 param subscriptionId string = subscription().id
 
