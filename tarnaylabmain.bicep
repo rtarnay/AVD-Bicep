@@ -118,6 +118,7 @@ resource rg 'Microsoft.Resources/resourceGroups@2025-04-01' = [for resourceGroup
   location: location
 }]
 
+/*
 //Service Principal Permissions for AVD Scaling Plan
 @description('The Object ID (Principal ID) of the Azure Virtual Desktop Service Principal in your tenant.')
 param avdServicePrincipalObjectId string
@@ -129,7 +130,7 @@ param subscriptionId string = subscription().id
 // ID: 40c5ff49-9181-41f8-ae61-143b0e78555e
 @description('Built-in Role Definition ID for Desktop Virtualization Power On Off Contributor')
 param powerOnOffContributorRoleDefinitionId string = '40c5ff49-9181-41f8-ae61-143b0e78555e'
-
+*/
 
 //AVD Modules for networking, hostpool, scaling plan and Azure File Storage
 
