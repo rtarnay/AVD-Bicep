@@ -6,10 +6,10 @@ var environment = 'test'
 param newVirtualNetwork  = true
 param virtualNetworkName = 'tarnaylab-vnet-avd2'
 param virtualNetworkAddressSpace = '192.168.20.0/23'
-param subnetName = 'tarnaylab-vnet-subnet1-avd2'
-param subnetAddressPrefix = '192.168.21.0/24'
-param privateEndpointSubnetName = 'tarnaylab-vnet-private-endpoints-avd2'
-param privateEndpointSubnetAddressPrefix = '192.168.20.0/24'
+param subnetName = 'tarnaylab-vnet-subnet1-avd'
+param subnetAddressPrefix = '192.168.20.0/24'
+param privateEndpointSubnetName = 'tarnaylab-vnet-private-endpoints-avd'
+param privateEndpointSubnetAddressPrefix = '192.168.21.0/24'
 
 /*Host Pool Parameters*/
 param hostPoolName  = 'avd-${environment}-personal-hostPool'
