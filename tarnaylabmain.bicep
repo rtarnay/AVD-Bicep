@@ -105,10 +105,10 @@ param hostpoolproperties object = {
 //Create Resource Groups for deployment
 
 param resourcegroups object = {
-  resourceGroupName1: 'rg-avd-controlplane'
-  resourceGroupName2: 'rg-avd-storage'
-  resourceGroupName3: 'rg-avd-networking'
-
+  resourceGroupName1: 'rg-avd2-controlplane'
+  resourceGroupName2: 'rg-avd2-storage'
+  resourceGroupName3: 'rg-avd2-networking'
+  resourceGroupName4: 'rg-avd2-monitoring'
 
 }
 
@@ -117,7 +117,6 @@ resource rg 'Microsoft.Resources/resourceGroups@2025-04-01' = [for resourceGroup
   name: resourceGroup.value
   location: location
 }]
-
 
 
 //Service Principal Permissions for AVD Scaling Plan
@@ -171,7 +170,7 @@ module hostPool './modules/hostpool.bicep' = {
 }
 
 module avdInsights './modules/avdinsights.bicep' = if (enablemonitoring) {
-  scope: resourceGroup(resourcegroups.resourceGroupName1)
+  scope: resourceGroup(resourcegroups.resourceGroupName4)
   params: {
     location: location
     hostPoolName: hostPoolName
@@ -202,11 +201,10 @@ module scalingPlan './modules/scaling_personal.bicep' = if (enableautoscaleplan)
     location: location
     hostPoolId: hostpoolpersonal.id
     scalingPlanName: '${hostPoolName}-scalingplan'
-    timeZone: timeZone
     avdServicePrincipalObjectId: avdServicePrincipalObjectId
-    subscriptionId:subscriptionId
     powerOnOffContributorRoleDefinitionId: powerOnOffContributorRoleDefinitionId
-
+    subscriptionId: subscriptionId
+    timeZone: timeZone
   }
   dependsOn: [
     rg
