@@ -22,7 +22,7 @@ param hostpooltype  = 'Personal'
 param fslogixEnabled = false
 
 //enable Storage Account for FSLogix
-param enablemonitoring = true
+param enablemonitoring = false
 
 //Scaling Plan Details
 param enableautoscaleplan = false
