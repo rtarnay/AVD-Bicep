@@ -23,6 +23,11 @@ param subnetName string
 @description('Virtual network resource Subnet Address Prefix.')
 param subnetAddressPrefix string
 
+@description('Private endpoint subnet name.')
+param privateEndpointSubnetName string
+@description('Private endpoint subnet address prefix.')
+param privateEndpointSubnetAddressPrefix string
+
 
 //AVD Host pool, application group and workspace parameters
 @description('Host pool resource name')
@@ -98,10 +103,10 @@ param hostpoolproperties object = {
 //Create Resource Groups for deployment
 
 param resourcegroups object = {
-  resourceGroupName1: 'rg-avd3-controlplane'
-  resourceGroupName2: 'rg-avd3-storage'
-  resourceGroupName3: 'rg-avd3-networking'
-  resourceGroupName4: 'rg-avd3-monitoring'
+  resourceGroupName1: 'rg-avd-controlplane'
+  resourceGroupName2: 'rg-avd-storage'
+  resourceGroupName3: 'rg-avd-networking'
+  resourceGroupName4: 'rg-avd-monitoring'
 
 }
 
@@ -133,6 +138,8 @@ module networking './modules/networking.bicep' = {
     newVirtualNetwork: newVirtualNetwork
     subnetAddressPrefix: subnetAddressPrefix
     subnetName: subnetName
+    privateEndpointSubnetName: privateEndpointSubnetName
+    privateEndpointSubnetAddressPrefix: privateEndpointSubnetAddressPrefix
     virtualNetworkAddressSpace:virtualNetworkAddressSpace
     virtualNetworkName:virtualNetworkName
   }
@@ -209,9 +216,9 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2026-01-01' existing 
 
 }
 
-resource subnet 'Microsoft.Network/virtualNetworks/subnets@2026-01-01' existing = {
+resource privateEndpointSubnet 'Microsoft.Network/virtualNetworks/subnets@2026-01-01' existing = {
   parent: virtualNetwork
-  name: subnetName
+  name: privateEndpointSubnetName
 }
 
 module storageAccount './modules/storage.bicep' = if (fslogixEnabled) {
@@ -224,7 +231,7 @@ module storageAccount './modules/storage.bicep' = if (fslogixEnabled) {
     fileShareQuota: fileShareQuota
     filePrivateDnsZoneName: filePrivateDnsZoneName
     virtualNetworkId: virtualNetwork.id
-    subnetId: subnet.id
+    privateEndpointSubnetId: privateEndpointSubnet.id
     filePrivateEndpointGroupName: filePrivateEndpointGroupName
     authenticationMethod: authenticationMethod
     

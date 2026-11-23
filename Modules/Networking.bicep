@@ -10,6 +10,10 @@ param virtualNetworkAddressSpace string
 param subnetName string
 @description('Virtual network resource Subnet Address Prefix.')
 param subnetAddressPrefix string
+@description('Private endpoint subnet name.')
+param privateEndpointSubnetName string
+@description('Private endpoint subnet address prefix.')
+param privateEndpointSubnetAddressPrefix string
 
 
 //Create Networking Resources
@@ -29,6 +33,16 @@ resource subnet 'Microsoft.Network/virtualNetworks/subnets@2026-01-01' = if(newV
   properties: {
     addressPrefix: subnetAddressPrefix
     privateEndpointNetworkPolicies: 'Enabled'
-    defaultOutboundAccess:true
+    defaultOutboundAccess: true
+  }
+}
+
+resource privateEndpointSubnet 'Microsoft.Network/virtualNetworks/subnets@2026-01-01' = if(newVirtualNetwork) {
+  parent: virtualNetwork
+  name: privateEndpointSubnetName
+  properties: {
+    addressPrefix: privateEndpointSubnetAddressPrefix
+    privateEndpointNetworkPolicies: 'Disabled'
+    defaultOutboundAccess: true
   }
 }

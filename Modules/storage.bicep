@@ -5,7 +5,8 @@ param fileShareName string
 param fileShareQuota int 
 param filePrivateDnsZoneName string
 param virtualNetworkId string 
-param subnetId string 
+@description('Resource ID of the dedicated private endpoint subnet.')
+param privateEndpointSubnetId string
 param filePrivateEndpointGroupName string 
 param authenticationMethod string 
 
@@ -102,7 +103,7 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2026-01-01' = {
       }
     ]
     subnet: {
-      id: subnetId
+      id: privateEndpointSubnetId
 
     }
   }
