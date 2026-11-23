@@ -3,7 +3,7 @@ using 'tarnaylabmain.bicep'
 var environment = 'test'
 
 /*Network Parameters*/
-param newVirtualNetwork  = false
+param newVirtualNetwork  = true
 param virtualNetworkName = 'tarnaylab-vnet-avd2'
 param virtualNetworkAddressSpace = '192.168.20.0/23'
 param subnetName = 'tarnaylab-vnet-subnet1-avd'
@@ -19,10 +19,10 @@ param logAnalyticsWorkspaceName = 'avd-${environment}-law'
 param hostpooltype  = 'Personal'
 
 //enable Storage Account for FSLogix
-param fslogixEnabled = false
+param fslogixEnabled = true
 
 //enable Storage Account for FSLogix
-param enablemonitoring = false
+param enablemonitoring = true
 
 //Scaling Plan Details
 param enableautoscaleplan = true
