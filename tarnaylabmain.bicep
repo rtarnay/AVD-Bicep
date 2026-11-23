@@ -200,9 +200,9 @@ module scalingPlan './modules/scaling_personal.bicep' = if (enableautoscaleplan)
     location: location
     hostPoolId: hostpoolpersonal.id
     scalingPlanName: '${hostPoolName}-scalingplan'
-    avdServicePrincipalObjectId: avdServicePrincipalObjectId
-    powerOnOffContributorRoleDefinitionId: powerOnOffContributorRoleDefinitionId
-    subscriptionId: subscriptionId
+    //avdServicePrincipalObjectId: avdServicePrincipalObjectId
+    //powerOnOffContributorRoleDefinitionId: powerOnOffContributorRoleDefinitionId
+    //subscriptionId: subscriptionId
     timeZone: timeZone
   }
   dependsOn: [
