@@ -105,10 +105,10 @@ param hostpoolproperties object = {
 //Create Resource Groups for deployment
 
 param resourcegroups object = {
-  resourceGroupName1: 'rg-avd2-controlplane'
-  resourceGroupName2: 'rg-avd2-storage'
-  resourceGroupName3: 'rg-avd2-networking'
-  resourceGroupName4: 'rg-avd2-monitoring'
+  resourceGroupName1: 'rg-avd-controlplane'
+  resourceGroupName2: 'rg-avd-storage'
+  resourceGroupName3: 'rg-avd-networking'
+
 
 }
 
@@ -118,7 +118,7 @@ resource rg 'Microsoft.Resources/resourceGroups@2025-04-01' = [for resourceGroup
   location: location
 }]
 
-
+/*
 //Service Principal Permissions for AVD Scaling Plan
 @description('The Object ID (Principal ID) of the Azure Virtual Desktop Service Principal in your tenant.')
 param avdServicePrincipalObjectId string
@@ -130,7 +130,7 @@ param subscriptionId string = subscription().id
 // ID: 40c5ff49-9181-41f8-ae61-143b0e78555e
 @description('Built-in Role Definition ID for Desktop Virtualization Power On Off Contributor')
 param powerOnOffContributorRoleDefinitionId string = '40c5ff49-9181-41f8-ae61-143b0e78555e'
-
+*/
 
 //AVD Modules for networking, hostpool, scaling plan and Azure File Storage
 
@@ -170,7 +170,7 @@ module hostPool './modules/hostpool.bicep' = {
 }
 
 module avdInsights './modules/avdinsights.bicep' = if (enablemonitoring) {
-  scope: resourceGroup(resourcegroups.resourceGroupName4)
+  scope: resourceGroup(resourcegroups.resourceGroupName1)
   params: {
     location: location
     hostPoolName: hostPoolName
@@ -201,9 +201,6 @@ module scalingPlan './modules/scaling_personal.bicep' = if (enableautoscaleplan)
     location: location
     hostPoolId: hostpoolpersonal.id
     scalingPlanName: '${hostPoolName}-scalingplan'
-    avdServicePrincipalObjectId: avdServicePrincipalObjectId
-    powerOnOffContributorRoleDefinitionId: powerOnOffContributorRoleDefinitionId
-    subscriptionId: subscriptionId
     timeZone: timeZone
   }
   dependsOn: [

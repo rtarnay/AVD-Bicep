@@ -21,11 +21,10 @@ param hostpooltype  = 'Personal'
 //enable Storage Account for FSLogix
 param fslogixEnabled = true
 
-//enable Storage Account for FSLogix
+//enable monitoring
 param enablemonitoring = true
 
 //Scaling Plan Details
 param enableautoscaleplan = true
-param avdServicePrincipalObjectId  = 'b827c2c6-050b-4533-ae45-13a656bd6e06'
-param subscriptionId = 'add28662-fd96-4fb4-9a1f-2c47e0005245'
+
 

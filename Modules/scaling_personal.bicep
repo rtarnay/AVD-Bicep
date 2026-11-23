@@ -15,7 +15,7 @@ param timeZone string = 'AUS Eastern Standard Time'
 @description('Resource ID of the personal host pool to associate with this plan.')
 param hostPoolId string
 
-
+/*
 //Service Principal Permissions for AVD Scaling Plan
 @description('The Object ID (Principal ID) of the Azure Virtual Desktop Service Principal in your tenant.')
 param avdServicePrincipalObjectId string
@@ -36,7 +36,7 @@ resource avdPowerOnOffRoleAssignment 'Microsoft.Authorization/roleAssignments@20
     principalType: 'ServicePrincipal'
   }
 }
-
+*/
 
 resource scalingPlan 'Microsoft.DesktopVirtualization/scalingPlans@2025-10-10' = {
   name: scalingPlanName
