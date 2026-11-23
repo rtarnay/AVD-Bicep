@@ -46,6 +46,8 @@ param workspaceName string
 
 @description('Dedicated Log Analytics workspace name for Azure Virtual Desktop Insights.')
 param logAnalyticsWorkspaceName string
+@description('Set this to true to deploy Azure Virtual Desktop Insights monitoring.')
+param enablemonitoring bool = false
 
 @description('Application group resource property configuration')
 param applicationGroupProperties object = {
@@ -166,7 +168,7 @@ module hostPool './modules/hostpool.bicep' = {
   ]
 }
 
-module avdInsights './modules/avdinsights.bicep' = {
+module avdInsights './modules/avdinsights.bicep' = if (enablemonitoring) {
   scope: resourceGroup(resourcegroups.resourceGroupName4)
   params: {
     location: location
