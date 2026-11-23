@@ -19,7 +19,6 @@ param retentionInDays int = 30
 
 var hostPoolDiagnosticCategories = [
   'Management'
-  'Feed'
   'Connection'
   'Error'
   'Checkpoint'
@@ -29,7 +28,6 @@ var hostPoolDiagnosticCategories = [
 
 var workspaceDiagnosticCategories = [
   'Management'
-  'Feed'
   'Error'
   'Checkpoint'
 ]

@@ -4,8 +4,8 @@
 
 The `modules/avdinsights.bicep` module creates a dedicated pay-as-you-go Log Analytics workspace and sends Azure Virtual Desktop control-plane diagnostics to it:
 
-- Host pool: Management, Feed, Connection, Error, Checkpoint, HostRegistration, and AgentHealthStatus.
-- Azure Virtual Desktop workspace: Management, Feed, Error, and Checkpoint.
+- Host pool: Management, Connection, Error, Checkpoint, HostRegistration, and AgentHealthStatus.
+- Azure Virtual Desktop workspace: Management, Error, and Checkpoint.
 
 The diagnostic settings use resource-specific Log Analytics tables (`Dedicated`). The workspace defaults to 30 days of retention, enables resource-context access, and leaves ingestion and query endpoints enabled so the Azure portal and Insights workbook can access it. Use private endpoints and disable public access only after configuring the corresponding network access path.
 
