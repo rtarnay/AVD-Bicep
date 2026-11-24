@@ -134,7 +134,7 @@ param powerOnOffContributorRoleDefinitionId string = '40c5ff49-9181-41f8-ae61-14
 
 //AVD Modules for networking, hostpool, scaling plan and Azure File Storage
 
-module networking './modules/networking.bicep' = {
+module networking 'br:tarnaylabacr.azurecr.io/bicep/modules/network:v1.0.0' = {
   name: 'networkingcomponent'
   scope: resourceGroup(resourcegroups.resourceGroupName3)
   params: {
@@ -151,7 +151,7 @@ module networking './modules/networking.bicep' = {
   ]
 }
 
-module hostPool './modules/hostpool.bicep' = {
+module hostPool 'br:tarnaylabacr.azurecr.io/bicep/modules/hostpool:v1.0.0' = {
   name: 'hostPoolComponent'
   scope: resourceGroup(resourcegroups.resourceGroupName1)
   params: {
@@ -169,7 +169,7 @@ module hostPool './modules/hostpool.bicep' = {
   ]
 }
 
-module avdInsights './modules/avdinsights.bicep' = if (enablemonitoring) {
+module avdInsights 'br:tarnaylabacr.azurecr.io/bicep/modules/monitoring:v1.0.0' = if (enablemonitoring) {
   scope: resourceGroup(resourcegroups.resourceGroupName1)
   params: {
     location: location
@@ -194,7 +194,7 @@ param enableautoscaleplan bool
 @description('Time zone for the scaling plan, e.g., AUS Eastern Standard Time')
 param timeZone string = 'AUS Eastern Standard Time'
 
-module scalingPlan './modules/scaling_personal.bicep' = if (enableautoscaleplan) {
+module scalingPlan 'br:tarnaylabacr.azurecr.io/bicep/modules/scalingplan:v1.0.0' = if (enableautoscaleplan) {
   name: 'scalingPlanComponent'
   scope: resourceGroup(resourcegroups.resourceGroupName1)
   params: {
@@ -224,7 +224,7 @@ resource privateEndpointSubnet 'Microsoft.Network/virtualNetworks/subnets@2026-0
   name: privateEndpointSubnetName
 }
 
-module storageAccount './modules/storage.bicep' = if (fslogixEnabled) {
+module storageAccount 'br:tarnaylabacr.azurecr.io/bicep/modules/storage-account:v1.0.0' = if (fslogixEnabled) {
   name: 'storageAccountComponent'
   scope: resourceGroup(resourcegroups.resourceGroupName2)
   params: {
