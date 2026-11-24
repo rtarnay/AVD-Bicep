@@ -25,7 +25,7 @@ param fslogixEnabled = false
 param enablemonitoring = false
 
 //Scaling Plan Details
-param enableautoscaleplan = false
+param enableautoscaleplan = true
 param avdServicePrincipalObjectId  = 'b827c2c6-050b-4533-ae45-13a656bd6e06'
 param subscriptionId = 'add28662-fd96-4fb4-9a1f-2c47e0005245'
 

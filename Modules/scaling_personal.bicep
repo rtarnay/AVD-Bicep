@@ -22,6 +22,10 @@ param avdServicePrincipalObjectId string
 @description('The subscription ID where the AVD scaling plan and host pools reside.')
 param subscriptionId string = subscription().id
 
+var roleDefintionResourceID = subscriptionResourceId(
+  'Microsoft.Authorization/roleDefinitions', 
+  powerOnOffContributorRoleDefinitionId)
+
 
 // Built-in Role ID for 'Desktop Virtualization Power On Off Contributor'
 // ID: 40c5ff49-9181-41f8-ae61-143b0e78555e
@@ -31,10 +35,11 @@ param powerOnOffContributorRoleDefinitionId string = '40c5ff49-9181-41f8-ae61-14
 resource avdPowerOnOffRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(subscriptionId, avdServicePrincipalObjectId, powerOnOffContributorRoleDefinitionId)
   properties: {
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', powerOnOffContributorRoleDefinitionId)
+    roleDefinitionId: roleDefintionResourceID
     principalId: avdServicePrincipalObjectId
     principalType: 'ServicePrincipal'
   }
+ 
 }
 
 
